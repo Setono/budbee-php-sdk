@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace Setono\Budbee\Client\Endpoint;
 
+use Setono\Budbee\DTO\Box;
 use Setono\Budbee\DTO\BoxCollection;
+use Setono\Budbee\Exception\NotFoundException;
 
 final class BoxesEndpoint extends Endpoint implements BoxesEndpointInterface
 {
@@ -31,5 +33,17 @@ final class BoxesEndpoint extends Endpoint implements BoxesEndpointInterface
             ->map(BoxCollection::class, $this->createSourceFromResponse($response)->map([
                 'lockers' => 'boxes',
             ]));
+    }
+
+    public function getLockerByIdentifier(string $identifier): ?Box
+    {
+        try {
+            $response = $this->client->get(sprintf('boxes/%s', $identifier));
+        } catch (NotFoundException $e) {
+            return null;
+        }
+
+        return $this->mapperBuilder->mapper()
+            ->map(Box::class, $this->createSourceFromResponse($response));
     }
 }

@@ -16,7 +16,9 @@ use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
 use Setono\Budbee\Client\Endpoint\BoxesEndpoint;
 use Setono\Budbee\Client\Endpoint\BoxesEndpointInterface;
-use Setono\Budbee\Exception\ResponseException;
+use Setono\Budbee\Exception\InternalServerErrorException;
+use Setono\Budbee\Exception\NotFoundException;
+use Setono\Budbee\Exception\UnexpectedStatusCodeException;
 
 final class Client implements ClientInterface, LoggerAwareInterface
 {
@@ -72,7 +74,7 @@ final class Client implements ClientInterface, LoggerAwareInterface
         $this->lastRequest = $request;
         $this->lastResponse = $this->getHttpClient()->sendRequest($this->lastRequest);
 
-        ResponseException::assertStatusCode($this->lastResponse);
+        self::assertStatusCode($this->lastResponse);
 
         return $this->lastResponse;
     }
@@ -153,5 +155,19 @@ final class Client implements ClientInterface, LoggerAwareInterface
         }
 
         return $this->requestFactory;
+    }
+
+    private static function assertStatusCode(ResponseInterface $response): void
+    {
+        $statusCode = $response->getStatusCode();
+
+        if ($statusCode >= 200 && $statusCode < 300) {
+            return;
+        }
+
+        NotFoundException::assert($response);
+        InternalServerErrorException::assert($response);
+
+        throw new UnexpectedStatusCodeException($response);
     }
 }

@@ -20,9 +20,9 @@ final class BoxCollectionTest extends TestCase
             'id',
             'name',
             'directions',
+            new Address('street', '1234', 'city', 'DK', new Coordinate(123.4, 123.4)),
             'label',
-            50,
-            new Address('street', '1234', 'city', 'DK', new Coordinate(123.4, 123.4))
+            50
         );
         $collection = new BoxCollection([$servicepoint]);
 

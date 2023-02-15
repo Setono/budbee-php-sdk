@@ -20,7 +20,7 @@ final class BoxesEndpointTest extends TestCase
     /**
      * @test
      */
-    public function it_finds_boxes_by_country_code_and_postal_code(): void
+    public function it_gets_boxes_by_country_code_and_postal_code(): void
     {
         $client = $this->createClient(<<<JSON
 {
@@ -77,6 +77,120 @@ JSON);
         foreach ($boxes as $box) {
             self::assertInstanceOf(Box::class, $box);
         }
+    }
+
+    /**
+     * @test
+     */
+    public function it_gets_box_by_identifier(): void
+    {
+        $client = $this->createClient(<<<JSON
+{
+    "id": "BOX0012",
+    "address": {
+        "street": "Ehlersvej 11",
+        "postalCode": "2900",
+        "city": "Hellerup",
+        "country": "DK",
+        "coordinate": {
+            "latitude": 55.72806157181675,
+            "longitude": 12.57328965570486
+        }
+    },
+    "name": "Budbee CPH Office",
+    "directions": "The Budbee Box is found inside the building behind the reception on the first floor.",
+    "openingHours": {
+        "periods": [
+            {
+                "open": {
+                    "day": "MONDAY",
+                    "time": "11:00"
+                },
+                "close": {
+                    "day": "MONDAY",
+                    "time": "21:00"
+                }
+            },
+            {
+                "open": {
+                    "day": "TUESDAY",
+                    "time": "11:00"
+                },
+                "close": {
+                    "day": "TUESDAY",
+                    "time": "21:00"
+                }
+            },
+            {
+                "open": {
+                    "day": "WEDNESDAY",
+                    "time": "11:00"
+                },
+                "close": {
+                    "day": "WEDNESDAY",
+                    "time": "21:00"
+                }
+            },
+            {
+                "open": {
+                    "day": "THURSDAY",
+                    "time": "11:00"
+                },
+                "close": {
+                    "day": "THURSDAY",
+                    "time": "21:00"
+                }
+            },
+            {
+                "open": {
+                    "day": "FRIDAY",
+                    "time": "11:00"
+                },
+                "close": {
+                    "day": "FRIDAY",
+                    "time": "21:00"
+                }
+            },
+            {
+                "open": {
+                    "day": "SATURDAY",
+                    "time": "11:00"
+                },
+                "close": {
+                    "day": "SATURDAY",
+                    "time": "21:00"
+                }
+            },
+            {
+                "open": {
+                    "day": "SUNDAY",
+                    "time": "00:00"
+                },
+                "close": {
+                    "day": "SUNDAY",
+                    "time": "00:00"
+                }
+            }
+        ],
+        "weekdayText": [
+            "Mon: 11 – 21",
+            "Tue: 11 – 21",
+            "Wed: 11 – 21",
+            "Thu: 11 – 21",
+            "Fri: 11 – 21",
+            "Sat: 11 – 21",
+            "Sun: 00 – 00"
+        ]
+    }
+}
+JSON);
+        $box = $client->boxes()->getLockerByIdentifier('BOX0012');
+
+        $lastRequest = $client->getLastRequest();
+
+        self::assertNotNull($box);
+        self::assertNotNull($lastRequest);
+        self::assertSame('https://api.budbee.com/boxes/BOX0012', (string) $lastRequest->getUri());
     }
 
     private function createClient(string $returnedJson): ClientInterface

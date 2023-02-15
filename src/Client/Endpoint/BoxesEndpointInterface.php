@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\Budbee\Client\Endpoint;
 
+use Setono\Budbee\DTO\Box;
 use Setono\Budbee\DTO\BoxCollection;
 
 interface BoxesEndpointInterface extends EndpointInterface
@@ -21,4 +22,9 @@ interface BoxesEndpointInterface extends EndpointInterface
         int $length = null,
         \DateTimeInterface $readyToShip = null
     ): BoxCollection;
+
+    /**
+     * Returns null if a box / locker doesn't exist with the given identifier
+     */
+    public function getLockerByIdentifier(string $identifier): ?Box;
 }
