@@ -26,7 +26,8 @@ final class ResponseExceptionTest extends TestCase
     public function it_throws_exception_if_status_code_is_below_200(): void
     {
         $this->expectException(ResponseException::class);
-        ResponseException::assertStatusCode(new Response(199));
+        $this->expectExceptionMessage('The status code was: 199. The response body was: Response body');
+        ResponseException::assertStatusCode(new Response(199, [], 'Response body'));
     }
 
     /**
