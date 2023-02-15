@@ -16,6 +16,8 @@ composer require setono/budbee-php-sdk
 
 ## Usage
 
+### Get available lockers
+
 ```php
 <?php
 
@@ -53,6 +55,23 @@ Budbee CPH Office (BOX0012)
 Ehlersvej 11
 2900 Hellerup
 DK
+```
+
+### Other requests
+
+If the endpoint or method you want to call isn't present yet, you have two options: 1) Create a PR and add the missing parts or 2) use the generic `request` method:
+
+```php
+<?php
+
+use Setono\Budbee\Client\Client;
+
+require_once '../vendor/autoload.php';
+
+$client = new Client('API_KEY', 'API_SECRET');
+
+/** @var \Psr\Http\Message\ResponseInterface $response */
+$response = $client->request(/** @var \Psr\Http\Message\RequestInterface $request */ $request);
 ```
 
 ## Production usage
