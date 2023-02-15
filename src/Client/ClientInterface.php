@@ -31,7 +31,7 @@ interface ClientInterface
     /**
      * @throws ClientExceptionInterface If an error happens while processing the request.
      */
-    public function get(string $uri): ResponseInterface;
+    public function get(string $uri, array $query = []): ResponseInterface;
 
     public function boxes(): BoxesEndpointInterface;
 }

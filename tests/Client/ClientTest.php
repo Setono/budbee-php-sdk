@@ -28,13 +28,17 @@ final class ClientTest extends TestCase
 
         $client = new Client($apiKey, $apiSecret);
         $client->setHttpClient($httpClient);
-        $client->get('endpoint/sub?param=value 1');
+        $client->get('endpoint/sub', [
+            'empty' => null,
+            'param1' => 'value 1',
+            'param2' => 'value 2',
+        ]);
 
         self::assertNotNull($httpClient->lastRequest);
         self::assertNotNull($client->getLastResponse());
         self::assertNotNull($client->getLastRequest());
         self::assertSame('GET', $httpClient->lastRequest->getMethod());
-        self::assertSame('https://api.budbee.com/endpoint/sub?param=value%201', (string) $httpClient->lastRequest->getUri());
+        self::assertSame('https://api.budbee.com/endpoint/sub?param1=value%201&param2=value%202', (string) $httpClient->lastRequest->getUri());
         self::assertSame($expectedAuthorizationHeader, $httpClient->lastRequest->getHeaderLine('Authorization'));
     }
 

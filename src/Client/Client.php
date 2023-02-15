@@ -68,9 +68,13 @@ final class Client implements ClientInterface
         return $this->lastResponse;
     }
 
-    public function get(string $uri): ResponseInterface
+    public function get(string $uri, array $query = []): ResponseInterface
     {
-        $url = sprintf('%s/%s', $this->getBaseUri(), ltrim($uri, '/'));
+        $q = http_build_query(array_map(static function ($element) {
+            return $element instanceof \DateTimeInterface ? $element->format(\DATE_ATOM) : $element;
+        }, array_filter($query)), '', '&', \PHP_QUERY_RFC3986);
+
+        $url = sprintf('%s/%s%s', $this->getBaseUri(), ltrim($uri, '/'), '' === $q ? '' : '?' . $q);
 
         $request = $this->getRequestFactory()->createRequest('GET', $url);
 

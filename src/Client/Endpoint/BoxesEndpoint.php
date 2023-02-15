@@ -18,23 +18,14 @@ final class BoxesEndpoint extends Endpoint implements BoxesEndpointInterface
         int $length = null,
         \DateTimeInterface $readyToShip = null
     ): BoxCollection {
-        // https://api.budbee.com/boxes/postalcodes/validate/{countryCode}/{postalCode}?collectionPointId={collectionPoint}&language={language}&width={width}&height={height}&length={length}&readyToShip={readyToShip}
-        $uri = sprintf('boxes/postalcodes/validate/%s/%s', $countryCode, $postalCode);
-
-        $query = http_build_query(array_filter([
+        $response = $this->client->get(sprintf('boxes/postalcodes/validate/%s/%s', $countryCode, $postalCode), [
             'collectionPointId' => $collectionPointId,
             'language' => $language,
             'width' => $width,
             'height' => $height,
             'length' => $length,
-            'readyToShip' => $readyToShip ? $readyToShip->format(\DATE_ATOM) : null,
-        ]));
-
-        if ('' !== $query) {
-            $uri .= '?' . $query;
-        }
-
-        $response = $this->client->get($uri);
+            'readyToShip' => $readyToShip,
+        ]);
 
         return $this->mapperBuilder->mapper()
             ->map(BoxCollection::class, $this->createSourceFromResponse($response)->map([
