@@ -26,39 +26,33 @@ use Setono\Budbee\DTO\Box;
 require_once '../vendor/autoload.php';
 
 $client = new Client('API_KEY', 'API_SECRET');
+// Set a logger to log more details about exceptions thrown
+// $client->setLogger($logger);
+
+// Enable sandbox mode to test your integration
+// $client->setSandbox();
 
 $boxes = $client
     ->boxes()
-    ->getAvailableLockers('DK', '9000')
+    ->getAvailableLockers('DK', '1159')
 ;
 
+/** @var Box $box */
 foreach ($boxes as $box) {
-    echo $box->name . "\n";
+    echo $box->name . " ($box->id)\n";
     echo $box->address->street . "\n";
-    echo $box->address->zipCode . ' ' . $box->address->city . "\n";
-    echo $box->address->countryCode . "\n\n";
+    echo $box->address->postalCode . ' ' . $box->address->city . "\n";
+    echo $box->address->country . "\n\n";
 }
 ```
 
 will output something like:
 
 ```
-Min Købmand Nørre Uttrup
-Nørre Uttrup Torv 15
-9400 Nørresundby
+Budbee CPH Office (BOX0012)
+Ehlersvej 11
+2900 Hellerup
 DK
-
-Shell 7-Eleven Nørresundby
-Østergade 27-29
-9400 Nørresundby
-DK
-
-Next-Data.Dk
-Østerbrogade 79
-9400 Nørresundby
-DK
-
-...
 ```
 
 ## Production usage

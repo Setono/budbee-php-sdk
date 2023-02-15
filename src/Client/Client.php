@@ -11,10 +11,14 @@ use Psr\Http\Client\ClientInterface as HttpClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\RequestInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
+use Psr\Log\NullLogger;
 use Setono\Budbee\Client\Endpoint\BoxesEndpoint;
 use Setono\Budbee\Client\Endpoint\BoxesEndpointInterface;
+use Setono\Budbee\Exception\ResponseException;
 
-final class Client implements ClientInterface
+final class Client implements ClientInterface, LoggerAwareInterface
 {
     private bool $sandbox = false;
 
@@ -28,6 +32,8 @@ final class Client implements ClientInterface
 
     private ?RequestFactoryInterface $requestFactory = null;
 
+    private LoggerInterface $logger;
+
     private string $apiKey;
 
     private string $apiSecret;
@@ -36,6 +42,7 @@ final class Client implements ClientInterface
 
     public function __construct(string $apiKey, string $apiSecret)
     {
+        $this->logger = new NullLogger();
         $this->apiKey = $apiKey;
         $this->apiSecret = $apiSecret;
     }
@@ -65,6 +72,8 @@ final class Client implements ClientInterface
         $this->lastRequest = $request;
         $this->lastResponse = $this->getHttpClient()->sendRequest($this->lastRequest);
 
+        ResponseException::assertStatusCode($this->lastResponse);
+
         return $this->lastResponse;
     }
 
@@ -85,6 +94,7 @@ final class Client implements ClientInterface
     {
         if (null === $this->boxesEndpoint) {
             $this->boxesEndpoint = new BoxesEndpoint($this, $this->getMapperBuilder());
+            $this->boxesEndpoint->setLogger($this->logger);
         }
 
         return $this->boxesEndpoint;
@@ -115,6 +125,11 @@ final class Client implements ClientInterface
     public function setRequestFactory(?RequestFactoryInterface $requestFactory): void
     {
         $this->requestFactory = $requestFactory;
+    }
+
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
     }
 
     private function getBaseUri(): string
