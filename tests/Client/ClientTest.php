@@ -33,13 +33,17 @@ final class ClientTest extends TestCase
             'empty' => null,
             'param1' => 'value 1',
             'param2' => 'value 2',
+            'date' => \DateTimeImmutable::createFromFormat('Y-m-d H:i:s', '2023-02-15 11:50:00'),
         ]);
 
         self::assertNotNull($httpClient->lastRequest);
         self::assertNotNull($client->getLastResponse());
         self::assertNotNull($client->getLastRequest());
         self::assertSame('GET', $httpClient->lastRequest->getMethod());
-        self::assertSame('https://api.budbee.com/endpoint/sub?param1=value%201&param2=value%202', (string) $httpClient->lastRequest->getUri());
+        self::assertSame(
+            'https://api.budbee.com/endpoint/sub?param1=value%201&param2=value%202&date=2023-02-15T11%3A50%3A00%2B00%3A00',
+            (string) $httpClient->lastRequest->getUri()
+        );
         self::assertSame($expectedAuthorizationHeader, $httpClient->lastRequest->getHeaderLine('Authorization'));
     }
 
