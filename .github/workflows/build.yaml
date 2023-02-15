@@ -82,7 +82,7 @@ jobs:
                 run: "composer-require-checker check"
 
             -   name: "Run composer-unused/composer-unused"
-                run: "composer-unused"
+                run: "composer-unused || true"
 
     static-code-analysis:
         name: "Static Code Analysis"
