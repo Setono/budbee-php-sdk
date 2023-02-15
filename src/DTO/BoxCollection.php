@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Setono\Budbee\DTO;
 
 /**
- * @implements \IteratorAggregate<Box>
+ * @implements \IteratorAggregate<int, Box>
  */
 final class BoxCollection implements \IteratorAggregate, \Countable
 {
@@ -20,6 +20,11 @@ final class BoxCollection implements \IteratorAggregate, \Countable
         $this->boxes = $boxes;
     }
 
+    /**
+     * @return Box[]
+     *
+     * @psalm-return \ArrayIterator<int<0, max>, Box>
+     */
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->boxes);
