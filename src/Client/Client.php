@@ -72,7 +72,7 @@ final class Client implements ClientInterface
     {
         $q = http_build_query(array_map(static function ($element) {
             return $element instanceof \DateTimeInterface ? $element->format(\DATE_ATOM) : $element;
-        }, array_filter($query)), '', '&', \PHP_QUERY_RFC3986);
+        }, $query), '', '&', \PHP_QUERY_RFC3986);
 
         $url = sprintf('%s/%s%s', $this->getBaseUri(), ltrim($uri, '/'), '' === $q ? '' : '?' . $q);
 
