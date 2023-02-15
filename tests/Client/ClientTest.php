@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Setono\Budbee\Client;
 
+use CuyZ\Valinor\MapperBuilder;
 use Nyholm\Psr7\Response;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Client\ClientInterface as HttpClientInterface;
@@ -28,7 +29,7 @@ final class ClientTest extends TestCase
 
         $client = new Client($apiKey, $apiSecret);
         $client->setHttpClient($httpClient);
-        $client->get('endpoint/sub', [
+        $client->get('/endpoint/sub', [
             'empty' => null,
             'param1' => 'value 1',
             'param2' => 'value 2',
@@ -45,13 +46,38 @@ final class ClientTest extends TestCase
     /**
      * @test
      */
-    public function it_returns_same_servicepoints_endpoint(): void
+    public function it_returns_same_boxes_endpoint(): void
     {
-        $client = new Client('username', 'token');
-        $servicepointsEndpoint = $client->boxes();
+        $client = new Client('apiKey', 'apiSecret');
+        $boxesEndpoint = $client->boxes();
 
         // this checks that we get the same instance for each call
-        self::assertSame($servicepointsEndpoint, $client->boxes());
+        self::assertSame($boxesEndpoint, $client->boxes());
+    }
+
+    /**
+     * @test
+     */
+    public function it_returns_mapper_builder(): void
+    {
+        $client = new Client('apiKey', 'apiSecret');
+
+        $mapperBuilder = $client->getMapperBuilder();
+
+        self::assertSame($mapperBuilder, $client->getMapperBuilder());
+    }
+
+    /**
+     * @test
+     */
+    public function it_allows_to_set_the_mapper_builder(): void
+    {
+        $client = new Client('apiKey', 'apiSecret');
+
+        $mapperBuilder = $client->getMapperBuilder();
+        $client->setMapperBuilder(new MapperBuilder());
+
+        self::assertNotSame($mapperBuilder, $client->getMapperBuilder());
     }
 }
 
