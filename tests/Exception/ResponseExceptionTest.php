@@ -12,6 +12,17 @@ final class ResponseExceptionTest extends TestCase
     /**
      * @test
      */
+    public function it_does_not_throw_when_status_code_is_within_range(): void
+    {
+        ResponseException::assertStatusCode(new Response(200));
+        ResponseException::assertStatusCode(new Response(299));
+
+        self::assertTrue(true);
+    }
+
+    /**
+     * @test
+     */
     public function it_throws_exception_if_status_code_is_below_200(): void
     {
         $this->expectException(ResponseException::class);
