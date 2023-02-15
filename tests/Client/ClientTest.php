@@ -20,21 +20,21 @@ final class ClientTest extends TestCase
      */
     public function it_sends_expected_request(): void
     {
-        $username = 'username';
-        $token = 'token';
-        $expectedAuthorizationHeader = 'Basic ' . base64_encode("$username:$token");
+        $apiKey = 'username';
+        $apiSecret = 'token';
+        $expectedAuthorizationHeader = 'Basic ' . base64_encode("$apiKey:$apiSecret");
 
         $httpClient = new MockHttpClient();
 
-        $client = new Client($username, $token);
+        $client = new Client($apiKey, $apiSecret);
         $client->setHttpClient($httpClient);
-        $client->get('servicepoints/gls?street=Highway 1');
+        $client->get('endpoint/sub?param=value 1');
 
         self::assertNotNull($httpClient->lastRequest);
         self::assertNotNull($client->getLastResponse());
         self::assertNotNull($client->getLastRequest());
         self::assertSame('GET', $httpClient->lastRequest->getMethod());
-        self::assertSame('https://api.budbee.dk/servicepoints/gls?street=Highway%201', (string) $httpClient->lastRequest->getUri());
+        self::assertSame('https://api.budbee.com/endpoint/sub?param=value%201', (string) $httpClient->lastRequest->getUri());
         self::assertSame($expectedAuthorizationHeader, $httpClient->lastRequest->getHeaderLine('Authorization'));
     }
 
